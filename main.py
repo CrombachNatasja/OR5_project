@@ -13,7 +13,6 @@ def createUploaders():
         filecorrect, df2022_bewoners, df2022_adressen, df2022_paar, df2022_buren, df2022_kookte, df2022_tafelgenoot = checkinput(uploaded_file)
     
     if filecorrect:
-        st.write("goodjob")
         createPlanning(df2022_bewoners, df2022_adressen, df2022_paar, df2022_buren, df2022_kookte, df2022_tafelgenoot)
 
 def checkinput(uploaded_file):
