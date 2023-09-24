@@ -1,7 +1,10 @@
 import pandas as pd
+import numpy as np
 import streamlit as st
+import random
 
 def main():
+    print("---------")
     st.set_page_config(layout="wide")
     st.title('Homepage')
     createUploaders()
@@ -34,6 +37,7 @@ def checkInput(uploaded_file):
         df_buren = pd.read_excel(uploaded_file, sheet_name="Buren", skiprows=1)
         df_kookte = pd.read_excel(uploaded_file, sheet_name="Kookte vorig jaar", skiprows=1)
         df_tafelgenoot = pd.read_excel(uploaded_file, sheet_name="Tafelgenoot vorig jaar", skiprows=1)
+        print(df_bewoners.head())
         return True, df_bewoners, df_adressen, df_paar, df_buren, df_kookte, df_tafelgenoot
     else:
         st.error("Missing sheets")
@@ -42,6 +46,28 @@ def checkInput(uploaded_file):
 def checkPlanning(uploaded_file):
     data = pd.read_excel(uploaded_file)
     
+def read_planning(uploaded_file):
+    data = pd.read_excel(uploaded_file)
+
+def dataframe_aanmaken():
+    pd.DataFrame({})
+
+def maak_planning(uploaded_file):
+    # list met verdeling per gerecht: adres, kok, meerdere eters (incl. kok)
+    # list = ["gerecht", "adres", "kok", "eter1", "eter2", etc.]
+    verdelingen = {'Voor':[],'Hoofd':[],'Na':[]}
+    koks = []
+#    for Bewoner in range(len("Bewoner")):
+#        if df.uploaded_file["Kookt niet"] != 1:
+#            koks.append("Bewoner")
+    
+    
+    # bewoner en adres blijven hetzelfde (gekoppeld)
+    # elke bewoner moet een gang koken (uitzonderingen)
+    # elke bewoner moet elke gang ergens eten
+    # elke bewoner eet zijn eigen gang
+    return
+
 def improvePlanning(df_bewoners, df_adressen, df_paar, df_buren, df_kookte, df_tafelgenoot, df_planning):
 
 
