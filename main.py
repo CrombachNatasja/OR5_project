@@ -69,6 +69,9 @@ def maak_planning(uploaded_file):
     return
 
 def improvePlanning(df_bewoners, df_adressen, df_paar, df_buren, df_kookte, df_tafelgenoot, df_planning):
+    for index, row in df_planning.iterrows():
+        results = df_planning.loc[df_planning["Voor"] == row["Voor"]]
+        
 
 
     """
