@@ -4,15 +4,12 @@ import streamlit as st
 import random
 import time
 
-uploaded_file = 
 
-read_planning("Running Dinner eerste oplossing 2022.xlsx")
-
-def read_planning(uploaded_file):
-    data = pd.read_excel(uploaded_file)
+uploaded_file = pd.read_excel("Running Dinner eerste oplossing 2022.xlsx")
     
 def switch_voorgerecht(uploaded_file):
-    df['Voor'] = df['Voor'].sample(frac=1).reset_index(drop=True)
+    # df['Voor'] = df['Voor'].sample(frac=1).reset_index(drop=True)
+    df["voor"].switch
     return
 
 def switch_hoofd():
