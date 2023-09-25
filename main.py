@@ -45,12 +45,7 @@ def checkInput(uploaded_file):
     
 def checkPlanning(uploaded_file):
     data = pd.read_excel(uploaded_file)
-    
-def read_planning(uploaded_file):
-    data = pd.read_excel(uploaded_file)
-
-def dataframe_aanmaken():
-    pd.DataFrame({})
+    # hier moet nog een inputcheck in 
 
 def improvePlanning(df_bewoners, df_adressen, df_paar, df_buren, df_kookte, df_tafelgenoot, df_planning):
     for index, row in df_planning.iterrows():
