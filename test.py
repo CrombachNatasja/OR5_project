@@ -46,11 +46,10 @@ def calculate_planning(data):
     else:
         return None
 
-
 def read_planning():
     data = pd.read_excel("Running Dinner eerste oplossing 2022.xlsx")
     data_save = data
-
+    """
     score = calculate_planning(data_save)
     #uit het dataframe de mensen die het voorrecht koken eruit filteren, zo voorkom je dat die mee gaan wisselen
 
@@ -67,12 +66,12 @@ def read_planning():
                 data_save.at[index2, "Voor"] = row2["Voor"]
             else:
                 score = new_score
-
+        """
     data_save.to_excel("new_planning.xlsx")
-read_planning()
+data = read_planning()
 
 #check of de duo's bij elkaar blijven -> MOET
-def duo_check(data,input_data):
+def duo_check(data):
     df_paar = pd.read_excel("Running Dinner dataset 2022.xlsx", sheet_name="Paar blijft bij elkaar", skiprows=1)
     for index, rows in df_paar.iterrows():
         bewoner1 = rows["Bewoner1"]
@@ -91,7 +90,7 @@ def duo_check(data,input_data):
     # if input_data["WO_59_M_Dré","Huisadres"] != input_data["WO_59_V_Els", "Huisadres"] or data["WO_25_M_Bar","Huisadres"] != data["WO_25_M_Bet", "Huisadres"]:
     #    return data["WO_59_M_Dré","Huisadres"]# False
 
-duo_check(data,input_data)
+duo_check(data)
 #Eis 1, belangrijkst 6x
 #deelnemer 1 en 2 maximaal 1 keer samen zit aan een tafel. Tellen hoevaak dit NIET het geval is -> int -> gewenst zo laag mogelijk
 
