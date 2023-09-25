@@ -52,22 +52,6 @@ def read_planning(uploaded_file):
 def dataframe_aanmaken():
     pd.DataFrame({})
 
-def maak_planning(uploaded_file):
-    # list met verdeling per gerecht: adres, kok, meerdere eters (incl. kok)
-    # list = ["gerecht", "adres", "kok", "eter1", "eter2", etc.]
-    verdelingen = {'Voor':[],'Hoofd':[],'Na':[]}
-    koks = []
-#    for Bewoner in range(len("Bewoner")):
-#        if df.uploaded_file["Kookt niet"] != 1:
-#            koks.append("Bewoner")
-    
-    
-    # bewoner en adres blijven hetzelfde (gekoppeld)
-    # elke bewoner moet een gang koken (uitzonderingen)
-    # elke bewoner moet elke gang ergens eten
-    # elke bewoner eet zijn eigen gang
-    return
-
 def improvePlanning(df_bewoners, df_adressen, df_paar, df_buren, df_kookte, df_tafelgenoot, df_planning):
     for index, row in df_planning.iterrows():
         results = df_planning.loc[df_planning["Voor"] == row["Voor"]]
