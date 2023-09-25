@@ -59,24 +59,69 @@ def calculate_planning(data):
         return score
     else:
         return None
+    
+def get_bewoner_pairs(data):
+    df_paar = pd.read_excel("Running Dinner dataset 2022.xlsx", sheet_name="Paar blijft bij elkaar", skiprows=1)
+    bewoner_lijst = {}
+    for index, rows in df_paar.iterrows():
+        bewoner1 = rows["Bewoner1"]
+        bewoner2 = rows["Bewoner2"]
+        
+        bewoner1_index = data.index[data['Bewoner'] == bewoner1].tolist()[0]
+        bewoner2_index = data.index[data['Bewoner'] == bewoner2].tolist()[0]
+
+        bewoner_lijst[bewoner1_index] = bewoner2_index
+    
+    return bewoner_lijst
+
+def get_key(val, my_dict):
+   
+    for key, value in my_dict.items():
+        if val == value:
+            return key
+ 
+    return "key doesn't exist"
+
+def get_index_same_adres(index, data, bewoner_lijst):
+    #Drop alles wat een paar heeft
+    #Drop alles waarbij iemand voorgerecht kookt
+    #Pak iemand waarbij de "Voor" matched met index
+    #Return deze index
+
+    return 0
 
 def read_planning():
     data = pd.read_excel("Running Dinner eerste oplossing 2022.xlsx")
-    df_paar = pd.read_excel("Running Dinner dataset 2022.xlsx", sheet_name="Paar blijft bij elkaar", skiprows=1)
     data_save = data
+    bewoner_lijst = get_bewoner_pairs(data_save)
 
     score = calculate_planning(data_save)
+    print("Start switching...")
     #uit het dataframe de mensen die het voorrecht koken eruit filteren, zo voorkom je dat die mee gaan wisselen
 
     for index1, row1 in data_save.iterrows():
         for index2, row2 in data_save.iloc[(index1+1):].iterrows():
             #als een van de paren wisselt, moet de ander ook wisselen. Iets van een koppeling tussen de twee hebben
             #if row1["Bewoner"] == onderdeel van paar -> ruil row1 en parner voor row2 en iemand met zelfde huisnummer
-            if row1["Bewoner"] in df_paar:
-                print(row1["Bewoner"])
+            if index1 in bewoner_lijst:
+                key = get_key(index1, bewoner_lijst)
+                val = bewoner_lijst.get(index1)
 
-            data_save.at[index1, "Voor"] = row2["Voor"]
-            data_save.at[index2, "Voor"] = row1["Voor"]
+                #get random index waar voor = voor van row2. Hierbij mag index3 niet gelijk zijn aan een van de paren of iemand die voor kookt
+                index3 = get_index_same_adres(index2, data_save, bewoner_lijst)
+                if key == "key doesn't exist":
+                    data_save.at[index1, "Voor"] = row2["Voor"] #Bewoner1
+                    data_save.at[key, "Voor"] = row2["Voor"] #Bewoner2
+                    data_save.at[index2, "Voor"] = row1["Voor"] #Index2 bewoner
+                    data_save.at[index3, "Voor"] = row1["Voor"] #Index van bewoner met hetzelfde adres als bewoner erboven. Uitgezonderd van kokers en een gedeelte van een paar
+                else:
+                    data_save.at[index1, "Voor"] = row2["Voor"]
+                    data_save.at[val, "Voor"] = row2["Voor"]
+                    data_save.at[index2, "Voor"] = row1["Voor"]
+                    data_save.at[index3, "Voor"] = row1["Voor"]
+            else:
+                data_save.at[index1, "Voor"] = row2["Voor"]
+                data_save.at[index2, "Voor"] = row1["Voor"]
 
             new_score = calculate_planning(data_save)
 
