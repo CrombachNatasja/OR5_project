@@ -33,7 +33,6 @@ def checkInput(uploaded_file):
         df_bewoners = pd.read_excel(uploaded_file, sheet_name="Bewoners")
         df_adressen = pd.read_excel(uploaded_file, sheet_name="Adressen")
         df_paar = pd.read_excel(uploaded_file, sheet_name="Paar blijft bij elkaar", skiprows=1)
-        df_paar = pd.read_excel(uploaded_file, sheet_name="Paar blijft bij elkaar", skiprows=1)  
         df_buren = pd.read_excel(uploaded_file, sheet_name="Buren", skiprows=1)
         df_kookte = pd.read_excel(uploaded_file, sheet_name="Kookte vorig jaar", skiprows=1)
         df_tafelgenoot = pd.read_excel(uploaded_file, sheet_name="Tafelgenoot vorig jaar", skiprows=1)
