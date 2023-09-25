@@ -2,20 +2,33 @@ import pandas as pd
 
 #check dat iedereen ingedeeld is -> MOET
 def is_everyone_plannend(data):
+    """
+    Checks if everyone is in the planning to eat every meal.
+    :input: The dataframe with the current planning.
+    :output: A boolean.
+    """
     return not(data['Voor'].isnull().values.any())
 
 #check of dat huisadres max niet overschreidt bij wisselingen -> MOET
 def max_people_not_exceeded(data):
+    """
+    Checks if the maximum people per adres per meal is not exceeded.
+    :input: The dataframe with the current planning.
+    :output: A boolean.
+    """
     data_voor_kokers = data.loc[data['kookt'] == "Voor"]
     for index, row in data_voor_kokers.iterrows():
         data_voor = data['Voor'].value_counts()[row['Huisadres']]
         if not(row['aantal'] >= data_voor):
             return False
-    
     return True
 
-#check of de duo's bij elkaar blijven -> MOET
 def duo_check(data):
+    """
+    Checks if the duos that need to stay together are placed together.
+    :input: The dataframe with the current planning.
+    :output: A boolean.
+    """
     df_paar = pd.read_excel("Running Dinner dataset 2022.xlsx", sheet_name="Paar blijft bij elkaar", skiprows=1)
     for index, rows in df_paar.iterrows():
         bewoner1 = rows["Bewoner1"]
@@ -24,7 +37,7 @@ def duo_check(data):
         bewoner1_index = data.index[data['Bewoner'] == bewoner1].tolist()[0]
         bewoner2_index = data.index[data['Bewoner'] == bewoner2].tolist()[0]
 
-        if not(data.iloc[bewoner1_index]['Voor'] == data.iloc[bewoner2_index]['Voor']):
+        if not(data.iloc[bewoner1_index]['Voor'] == data.iloc[bewoner2_index]['Voor'] and data.iloc[bewoner1_index]['Hoofd'] == data.iloc[bewoner2_index]['Hoofd'] and data.iloc[bewoner1_index]['Na'] == data.iloc[bewoner2_index]['Na']):
             return False
     
     return True
@@ -32,6 +45,11 @@ def duo_check(data):
 #Eis 1, belangrijkst 6x
 #deelnemer 1 en 2 maximaal 1 keer samen zit aan een tafel. Tellen hoevaak dit NIET het geval is -> int -> gewenst zo laag mogelijk
 def more_than_once_together(data):
+    """
+    Counts how many times two people are eating their meal together, gives a higher score when it is more than once.
+    :input: The dataframe with the current planning.
+    :output: int.
+    """
     score = 0
     for index1, row1 in data.iterrows():
         for index2, row2 in data.iloc[(index1+1):].iterrows():
@@ -50,6 +68,12 @@ def more_than_once_together(data):
 
 #Alle checks uitvoeren en score terug geven
 def calculate_planning(data):
+    """
+    Checks if the planning is possible with the given constraints.
+    If it is possible, it gives the planning score (the less, the better).
+    :input: The dataframe with the current planning.
+    :output: int.
+    """
     everyone_planned = is_everyone_plannend(data)
     max_people = max_people_not_exceeded(data)
     duos = duo_check(data)
@@ -130,7 +154,6 @@ def read_planning():
                 data_save.at[index2, "Voor"] = row2["Voor"]
             else:
                 score = new_score
-
     data_save.to_excel("new_planning.xlsx")
 
 read_planning()
