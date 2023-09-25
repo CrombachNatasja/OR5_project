@@ -1,6 +1,4 @@
 import pandas as pd
-import numpy as np
-import streamlit as st
 
 #check dat iedereen ingedeeld is -> MOET
 def is_everyone_plannend(data):
@@ -12,6 +10,21 @@ def max_people_not_exceeded(data):
     for index, row in data_voor_kokers.iterrows():
         data_voor = data['Voor'].value_counts()[row['Huisadres']]
         if not(row['aantal'] >= data_voor):
+            return False
+    
+    return True
+
+#check of de duo's bij elkaar blijven -> MOET
+def duo_check(data):
+    df_paar = pd.read_excel("Running Dinner dataset 2022.xlsx", sheet_name="Paar blijft bij elkaar", skiprows=1)
+    for index, rows in df_paar.iterrows():
+        bewoner1 = rows["Bewoner1"]
+        bewoner2 = rows["Bewoner2"]
+        
+        bewoner1_index = data.index[data['Bewoner'] == bewoner1].tolist()[0]
+        bewoner2_index = data.index[data['Bewoner'] == bewoner2].tolist()[0]
+
+        if not(data.iloc[bewoner1_index]['Voor'] == data.iloc[bewoner2_index]['Voor']):
             return False
     
     return True
@@ -39,16 +52,17 @@ def more_than_once_together(data):
 def calculate_planning(data):
     everyone_planned = is_everyone_plannend(data)
     max_people = max_people_not_exceeded(data)
+    duos = duo_check(data)
 
-    if everyone_planned and max_people:
+    if everyone_planned and max_people and duos:
         score = more_than_once_together(data)*6
         return score
     else:
         return None
 
-
 def read_planning():
     data = pd.read_excel("Running Dinner eerste oplossing 2022.xlsx")
+    df_paar = pd.read_excel("Running Dinner dataset 2022.xlsx", sheet_name="Paar blijft bij elkaar", skiprows=1)
     data_save = data
 
     score = calculate_planning(data_save)
@@ -57,6 +71,10 @@ def read_planning():
     for index1, row1 in data_save.iterrows():
         for index2, row2 in data_save.iloc[(index1+1):].iterrows():
             #als een van de paren wisselt, moet de ander ook wisselen. Iets van een koppeling tussen de twee hebben
+            #if row1["Bewoner"] == onderdeel van paar -> ruil row1 en parner voor row2 en iemand met zelfde huisnummer
+            if row1["Bewoner"] in df_paar:
+                print(row1["Bewoner"])
+
             data_save.at[index1, "Voor"] = row2["Voor"]
             data_save.at[index2, "Voor"] = row1["Voor"]
 
@@ -69,31 +87,8 @@ def read_planning():
                 score = new_score
 
     data_save.to_excel("new_planning.xlsx")
+
 read_planning()
-
-#check of de duo's bij elkaar blijven -> MOET
-def duo_check(data,input_data):
-    df_paar = pd.read_excel("Running Dinner dataset 2022.xlsx", sheet_name="Paar blijft bij elkaar", skiprows=1)
-    for index, rows in df_paar.iterrows():
-        bewoner1 = rows["Bewoner1"]
-        bewoner2 = rows["Bewoner2"]
-        
-        bewoner1_index = data.index[data['Bewoner'] == bewoner1].tolist()
-        bewoner2_index = data.index[data['Bewoner'] == bewoner2].tolist()
-        
-        if data.iloc[bewoner1_index][3] == data.iloc[bewoner2_index][3]:
-            print("mooi")
-        
-        #if data.index[data['Bewoner'] == bewoner1].tolist() != data(bewoner2)["Voor"] or data(bewoner1)["Hoofd"] != data(bewoner2)["Hoofd"] or data(bewoner1)["Na"] != data(bewoner2)["Na"]:
-        #    return "De paren blijven niet bij elkaar"
-        
-    return
-    # if input_data["WO_59_M_Dré","Huisadres"] != input_data["WO_59_V_Els", "Huisadres"] or data["WO_25_M_Bar","Huisadres"] != data["WO_25_M_Bet", "Huisadres"]:
-    #    return data["WO_59_M_Dré","Huisadres"]# False
-
-duo_check(data,input_data)
-#Eis 1, belangrijkst 6x
-#deelnemer 1 en 2 maximaal 1 keer samen zit aan een tafel. Tellen hoevaak dit NIET het geval is -> int -> gewenst zo laag mogelijk
 
 #Eis 4, 3x
 #deelnemers die in 2022 bij elkaar zaten liever niet ook in 2023 bij elkaar -> gewenst -> int hoevaak
