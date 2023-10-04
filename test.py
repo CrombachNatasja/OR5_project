@@ -1,5 +1,7 @@
 import pandas as pd
 
+data = pd.read_excel("Running Dinner eerste oplossing 2022.xlsx")
+
 #check dat iedereen ingedeeld is -> MOET
 def is_everyone_plannend(data):
     """
@@ -60,7 +62,7 @@ def more_than_once_together(data):
                 count += 1
             if row1["Na"] == row2["Na"]:
                 count += 1
-        
+                
             if count > 1:
                 score += 1
 
@@ -119,3 +121,32 @@ read_planning()
 
 #Eis 5, 1x
 #deelnemers die in 2021 bij elkaar zaten liever niet ook in 2023 bij elkaar -> gewenst -> int hoevaak
+def check_2021(data):
+    """
+    Checks the amount of people that are grouped with the same people as the year before.
+    :input: The dataframe with the current planning.
+    :output: A score.
+    """
+    last_year = pd.read_excel("Running Dinner eerste oplossing 2021.xlsx")
+    score = 0
+    for index1, row1 in data.iterrows():
+        for index2, row2 in last_year.iloc[(index1+1):].iterrows():
+            count = 0
+            for index, rows in last_year.iterrows():
+            bewoner1 = rows["Bewoner1"]
+        
+            bewoner1_index = data.index[data['Bewoner'] == bewoner1].tolist()[0]
+            if
+                data.iloc[bewoner1_index]['Bewoner'] == data.iloc[bewoner2_index]['Voor'] :
+                count += 1
+            if 
+                count += 1
+            if 
+                count += 1
+        
+            if count > 1:
+                score += 1
+
+    return score 
+
+check_2021(data)
