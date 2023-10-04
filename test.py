@@ -1,13 +1,15 @@
 import pandas as pd
 
-data = pd.read_excel("Running Dinner eerste oplossing 2022.xlsx")
+data = pd.read_excel("Running Dinner eerste oplossing 2023 v2.xlsx")
+data2021 = pd.read_excel("Running Dinner eerste oplossing 2021.xlsx")
+data2022 = pd.read_excel("Running Dinner eerste oplossing 2022.xlsx")
 
 #check dat iedereen ingedeeld is -> MOET
 def is_everyone_plannend(data):
     """
     Checks if everyone is in the planning to eat every meal.
     :input: The dataframe with the current planning.
-    :output: A boolean.
+    :output: Boolean.
     """
     return not(data['Voor'].isnull().values.any())
 
@@ -109,6 +111,9 @@ def calculate_planning(data):
     everyone_planned = is_everyone_plannend(data)
     max_people = max_people_not_exceeded(data)
     duos = duo_check(data)
+    counter_2021 = check_previous_years(data,data2021)
+    counter_2022 = check_previous_years(data,data2022)
+    
 
     if everyone_planned and max_people and duos:
         score = more_than_once_together(data)*6
@@ -117,6 +122,11 @@ def calculate_planning(data):
         return 99999999999
     
 def get_bewoner_pairs(data):
+    """
+    Generates a list with the participants that have to stay together during the evening.
+    :input: The dataframe with the current planning.
+    :output: A list.
+    """
     df_paar = pd.read_excel("Running Dinner dataset 2022.xlsx", sheet_name="Paar blijft bij elkaar", skiprows=1)
     bewoner_lijst = {}
     for index, rows in df_paar.iterrows():
@@ -131,7 +141,11 @@ def get_bewoner_pairs(data):
     return bewoner_lijst
 
 def get_key(val, my_dict):
-   
+    """
+    summary
+    :input:
+    :output:
+    """
     for key, value in my_dict.items():
         if val == value:
             return key
@@ -168,7 +182,6 @@ def read_planning():
     data = pd.read_excel("Running Dinner eerste oplossing 2022.xlsx")
     data = data.drop(data.columns[0], axis=1)
     score = calculate_planning(data)
-    
     # Create a new dataframe for participants with "Kookt" == "Voor"
     participants_voor = data[data['kookt'] == "Voor"]
 
@@ -176,7 +189,7 @@ def read_planning():
     data_save = data[data['kookt'] != "Voor"]
     data_save = data_save.reset_index(drop=True)
     bewoner_lijst = get_bewoner_pairs(data_save)
-
+   
     print("Start switching...")
     #uit het dataframe de mensen die het voorrecht koken eruit filteren, zo voorkom je dat die mee gaan wisselen
 
@@ -224,37 +237,40 @@ def read_planning():
 
 read_planning()
 
-#Eis 4, 3x
-#deelnemers die in 2022 bij elkaar zaten liever niet ook in 2023 bij elkaar -> gewenst -> int hoevaak
+def together_before(r1,r2):
+    """
+    Checks if two participants have eaten together before.
+    :r1: row of dataframe with the data of participant 1.
+    :r2: row of dataframe with the data of participant 2.
+    :output: boolean.
+    """
+    r2_compatible= r2["Voor"]
+    r2_compatible = r2_compatible.replace("V","VW")
+    r2_compatible = r2_compatible.replace("W", "WO")
+    if r1["Voor"] == r2_compatible:
+        return True
+    r2_compatible= r2["Hoofd"]
+    r2_compatible = r2_compatible.replace("V","VW")
+    r2_compatible = r2_compatible.replace("W", "WO")
+    if r1["Hoofd"] == r2_compatible:
+        return True
+    r2_compatible= r2["Na"]
+    r2_compatible = r2_compatible.replace("V","VW")
+    r2_compatible = r2_compatible.replace("W", "WO")
+    if r1["Na"] == r2_compatible:
+        return True
+    return False
 
-#Eis 5, 1x
-#deelnemers die in 2021 bij elkaar zaten liever niet ook in 2023 bij elkaar -> gewenst -> int hoevaak
-def check_2021(data):
+def check_previous_years(data,df):
     """
     Checks the amount of people that are grouped with the same people as the year before.
     :input: The dataframe with the current planning.
     :output: A score.
     """
-    last_year = pd.read_excel("Running Dinner eerste oplossing 2021.xlsx")
     score = 0
     for index1, row1 in data.iterrows():
-        for index2, row2 in last_year.iloc[(index1+1):].iterrows():
-            count = 0
-            for index, rows in last_year.iterrows():
-            bewoner1 = rows["Bewoner1"]
-        
-            bewoner1_index = data.index[data['Bewoner'] == bewoner1].tolist()[0]
-            if
-                data.iloc[bewoner1_index]['Bewoner'] == data.iloc[bewoner2_index]['Voor'] :
-                count += 1
-            if 
-                count += 1
-            if 
-                count += 1
-        
-            if count > 1:
+        for index2, row2 in data2021.iloc[(index1+1):].iterrows():
+            together_or_not = together_before(row1,row2)
+            if together_or_not == True and row1["Bewoner"] != row2["Bewoner"]:
                 score += 1
-
-    return score 
-
-check_2021(data)
+    return score/2 # The score is divided by 2, because it matches all participants twice.
