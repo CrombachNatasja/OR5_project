@@ -10,6 +10,9 @@ def main():
     createUploaders()
 
 def createUploaders():
+    """
+    Creates an interface with two columns where users can put in the needed documents.
+    """
     filecorrect = False
     planningcorrect = False
 
@@ -27,6 +30,10 @@ def createUploaders():
         improvePlanning(df_bewoners, df_adressen, df_paar, df_buren, df_kookte, df_tafelgenoot, df_planning)
 
 def checkInput(uploaded_file):
+    """
+    Checks if all the necessary sheets are present in the dataframe.
+    :output: The columns and a boolean
+    """
     data = pd.read_excel(uploaded_file, sheet_name=None)
     allowed_sheets = ["Bewoners","Adressen","Paar blijft bij elkaar","Buren","Kookte vorig jaar","Tafelgenoot vorig jaar"]
     if all([i in allowed_sheets for i in data.keys()]):
@@ -43,15 +50,18 @@ def checkInput(uploaded_file):
         return False, pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
     
 def checkPlanning(uploaded_file):
+    """
+    ???
+    """
     data = pd.read_excel(uploaded_file)
     # hier moet nog een inputcheck in 
 
 def improvePlanning(df_bewoners, df_adressen, df_paar, df_buren, df_kookte, df_tafelgenoot, df_planning):
     for index, row in df_planning.iterrows():
         results = df_planning.loc[df_planning["Voor"] == row["Voor"]]
-        
-
-
+    """
+    ???
+    """
     """
     Eisen aan de planning van het Running Dinner
     De planning van het Running Dinner moet aan de volgende voorwaarden voldoen:

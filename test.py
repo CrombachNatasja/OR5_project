@@ -190,7 +190,7 @@ def get_bewoner_pairs(data):
 
 def get_key(val, my_dict):
     """
-    summary
+    ???
     :input:
     :output:
     """
@@ -285,6 +285,9 @@ def read_planning(course, data):
     return data
 
 def main():
+    """
+    Performs all steps needed to generate an Excel sheet with the new planning.
+    """
     logging.info(f"{get_current_timestamp()} - Starting program...")
     data = pd.read_excel("Running Dinner eerste oplossing 2022.xlsx")
     data = data.drop(data.columns[0], axis=1)

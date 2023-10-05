@@ -4,6 +4,7 @@ import streamlit as st
 import random
 import time
 
+# mag allemaal weg ofniet?
 
 uploaded_file = pd.read_excel("Running Dinner eerste oplossing 2022.xlsx")
     
