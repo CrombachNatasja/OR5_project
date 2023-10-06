@@ -113,37 +113,33 @@ def together_before(r1,r2):
     :output: boolean.
     """
     r2_compatible= r2["Voor"]
-    r2_compatible = r2_compatible.replace("V","VW")
-    r2_compatible = r2_compatible.replace("W", "WO")
+    r2_compatible = r2_compatible.replace("V","VW").replace("W", "WO")
     if r1["Voor"] == r2_compatible:
         return True
     r2_compatible= r2["Hoofd"]
-    r2_compatible = r2_compatible.replace("V","VW")
-    r2_compatible = r2_compatible.replace("W", "WO")
+    r2_compatible = r2_compatible.replace("V","VW").replace("W", "WO")
     if r1["Hoofd"] == r2_compatible:
         return True
     r2_compatible= r2["Na"]
-    r2_compatible = r2_compatible.replace("V","VW")
-    r2_compatible = r2_compatible.replace("W", "WO")
+    r2_compatible = r2_compatible.replace("V","VW").replace("W", "WO")
     if r1["Na"] == r2_compatible:
         return True
     return False
 
 #Eis 2/3, belangrijkst 3x
 #deelnemer 1 en 2 maximaal 1 keer samen zit aan een tafel tov van vorige jaren. Tellen hoevaak dit NIET het geval is -> int -> gewenst zo laag mogelijk
-def check_previous_years(data,data2021):
+def check_previous_years(data, data2021):
     """
-    Checks the amount of people that are grouped with the same people as the year before.
-    :input: The dataframe with the current planning.
-    :output: A score.
+    Checks how many times participants will be seated together again, if they have already eaten together last year.
+    :data: planning this year
+    :data2021: planning 2021
+    :returns:
     """
     score = 0
-    for index1, row1 in data.iterrows():
-        for index2, row2 in data2021.iloc[(index1+1):].iterrows():
-            together_or_not = together_before(row1,row2)
-            if together_or_not == True and row1["Bewoner"] != row2["Bewoner"]:
-                score += 1
-    return score/2 # The score is divided by 2, because it matches all participants twice.
+    bewoner_match = data['Bewoner'].values[:, None] == data2021['Bewoner'].values
+    if bewoner_match.all() == True and together_before(data, data2021) == True:
+        score += 1
+    return score / 2
 
 #Alle checks uitvoeren en score terug geven
 def calculate_planning(data, data2021, data2022, course, df_paar):
@@ -156,11 +152,11 @@ def calculate_planning(data, data2021, data2022, course, df_paar):
     everyone_planned = is_everyone_plannend(data, course)
     max_people = max_people_not_exceeded(data, course)
     duos = duo_check(data, df_paar)
-    #counter_2021 = check_previous_years(data,data2021)
-    #counter_2022 = check_previous_years(data,data2022)
+    counter_2021 = check_previous_years(data,data2021)
+    counter_2022 = check_previous_years(data,data2022)
 
     if everyone_planned and max_people and duos:
-        score = more_than_once_together(data)*6 #+ counter_2022*3 + counter_2021*1
+        score = more_than_once_together(data)*6 + counter_2022*3 + counter_2021*1
         return score
     else:
         return 99999999999
