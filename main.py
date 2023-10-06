@@ -46,10 +46,13 @@ def createUploaders():
         if st.button("Start"):
             if voor:
                 data2023 = rd.improve_planning('Voor',data2023, data2021, data2022, df_paar)
+                st.success("Klaar met voorgerecht")
             if hoofd:
                 data2023 = rd.improve_planning('Hoofd',data2023, data2021, data2022, df_paar)
+                st.success("Klaar met hoofdgerecht")
             if na:
                 data2023 = rd.improve_planning('Na',data2023, data2021, data2022, df_paar)
+                st.success("Klaar met nagerecht")
 
 def checkInput(uploaded_file, col):
     """
