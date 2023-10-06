@@ -156,11 +156,11 @@ def calculate_planning(data, data2021, data2022, course, df_paar):
     everyone_planned = is_everyone_plannend(data, course)
     max_people = max_people_not_exceeded(data, course)
     duos = duo_check(data, df_paar)
-    counter_2021 = check_previous_years(data,data2021)
-    counter_2022 = check_previous_years(data,data2022)
+    #counter_2021 = check_previous_years(data,data2021)
+    #counter_2022 = check_previous_years(data,data2022)
 
     if everyone_planned and max_people and duos:
-        score = more_than_once_together(data)*6 + counter_2022*3 + counter_2021*1
+        score = more_than_once_together(data)*6 #+ counter_2022*3 + counter_2021*1
         return score
     else:
         return 99999999999
@@ -172,14 +172,17 @@ def get_bewoner_pairs(data, df_paar):
     :return: A list.
     """
     bewoner_lijst = {}
-    for index, rows in df_paar.iterrows():
-        bewoner1 = rows["Bewoner1"]
-        bewoner2 = rows["Bewoner2"]
-        
-        bewoner1_index = data.index[data['Bewoner'] == bewoner1].tolist()[0]
-        bewoner2_index = data.index[data['Bewoner'] == bewoner2].tolist()[0]
+    for index, row in df_paar.iterrows():
+        bewoner1 = row["Bewoner1"]
+        bewoner2 = row["Bewoner2"]
 
-        bewoner_lijst[bewoner1_index] = bewoner2_index
+        bewoner1_indices = data.index[data['Bewoner'] == bewoner1].tolist()
+        bewoner2_indices = data.index[data['Bewoner'] == bewoner2].tolist()
+
+        if bewoner1_indices and bewoner2_indices:
+            bewoner1_index = bewoner1_indices[0]
+            bewoner2_index = bewoner2_indices[0]
+            bewoner_lijst[bewoner1_index] = bewoner2_index
     
     return bewoner_lijst
 
@@ -303,20 +306,15 @@ def read_planning(course, data, data2021, data2022, df_paar):
     data = pd.concat([data_save, participants_voor], ignore_index=True)
     return data
 
-def improve_planning(data2023, data2021, data2022, df_paar):
+def improve_planning(course, data2023, data2021, data2022, df_paar):
     """
     Performs all steps needed to generate an Excel sheet with the new planning.
     """
     logging.info(f"{get_current_timestamp()} - Starting program...")
+    logging.info(f"{get_current_timestamp()} - Starting voor {course}...")
+    data2023 = read_planning(course, data2023, data2021, data2022, df_paar)
+    data2023.to_excel("newplanning.xlsx")
 
-    data = data.drop(data.columns[0], axis=1)
-    logging.info(f"{get_current_timestamp()} - Starting voor...")
-    data = read_planning("Voor", data2023, data2021, data2022, df_paar)
-    logging.info(f"{get_current_timestamp()} - Starting hoofd...")
-    data = read_planning("Hoofd", data2023, data2021, data2022, df_paar)
-    logging.info(f"{get_current_timestamp()} - Starting na...")
-    data = read_planning("Na", data2023, data2021, data2022, df_paar)
-
-    data.to_excel("new_planning.xlsx")
     logging.info(f"{get_current_timestamp()}- Finished")
     logging.info(f"--------------------------------------------------------------------------------------")
+    return data2023
