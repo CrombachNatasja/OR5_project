@@ -309,7 +309,6 @@ def improve_planning(course, data2023, data2021, data2022, df_paar):
     logging.info(f"{get_current_timestamp()} - Starting program...")
     logging.info(f"{get_current_timestamp()} - Starting voor {course}...")
     data2023 = read_planning(course, data2023, data2021, data2022, df_paar)
-    data2023.to_excel("newplanning.xlsx")
 
     logging.info(f"{get_current_timestamp()}- Finished")
     logging.info(f"--------------------------------------------------------------------------------------")
