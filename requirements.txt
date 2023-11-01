@@ -1,5 +1,5 @@
 pandas
 numpy
-BytesIO
+io
 logging
 datetime
